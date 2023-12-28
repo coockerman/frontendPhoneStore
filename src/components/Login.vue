@@ -1,7 +1,8 @@
 <template>
   <div class="modal-container" v-show="isOpen">
     <div class="modal-content" @click.stop>
-      <button class="close-button" @click="closeModal">&times;</button>
+      <li>nhanvien:123abc</li>
+      <li>quanly:123abc</li>
       <slot name="content">
         <h2>Đăng nhập</h2>
         <form @submit.prevent="login">
@@ -52,21 +53,22 @@ export default {
       // Chuẩn bị dữ liệu đăng nhập
       const loginData = {
         userName: String(this.username),
-        password: String(this.password)
+        password: String(this.password),
       };
       // Gọi API đăng nhập
       axios
-        .post("http://localhost:8081/api/v1/authenticate", loginData)
+        .post("http://localhost:8081/api/v1/user/authenticate", loginData)
         .then((response) => {
           // Xử lý phản hồi từ API
           const result = response.data;
-          if (String(result) == "true") {
-            console.log("Đăng nhập thành công");
-            this.$emit('close');
+          if (String(result) == "QuanLy") {
+            console.log("Đăng nhập thành công trang quản lý");
+            this.$emit("SetQuanLy");
+          } else if (String(result) == "NhanVien") {
+            console.log("Đăng nhập thành công trang nhân viên");
+            this.$emit("SetNhanVien");
           } else {
-            // Đăng nhập thất bại, lưu thông báo lỗi để hiển thị
-            this.error =
-              "Kiểm tra lại tài khoản, mật khẩu";
+            this.error = "Kiểm tra lại tài khoản, mật khẩu";
           }
         })
         .catch((error) => {
@@ -75,7 +77,6 @@ export default {
           this.error = "Lỗi kết nối đến máy chủ";
         });
     },
-    
 
     // ... (các methods khác của bạn) ...
   },

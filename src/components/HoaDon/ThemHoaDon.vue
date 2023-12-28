@@ -1,7 +1,10 @@
 <template>
   <div class="form-container">
-    <div v-if="productExists" class="notification">
-      {{ notificationMessage }}
+    <div v-if="messageFalseExists" class="notification">
+      {{ notificationMessageFalse }}
+    </div>
+    <div v-if="messageTrueExists" class="notificationTrue">
+      {{ notificationMessageTrue }}
     </div>
     <form @submit.prevent="submitForm" class="my-form">
       <div class="form-group">
@@ -49,11 +52,6 @@
       <div class="form-group">
         <label for="storeName">Cơ sở:</label>
         <input v-model="storeName" type="text" id="storeName" required />
-        <!-- <select v-model="storeName" id="storeName">
-          <option value="HD">Hà Đông</option>
-          <option value="HK">Hoàn Kiếm</option>
-          <option value="HBT">Hai Bà Trưng</option>
-        </select> -->
       </div>
 
       <div class="form-group">
@@ -73,7 +71,7 @@
       </div>
 
       <div class="form-group">
-        <button type="submit" @click="submitForm">Submit</button>
+        <button type="submit" @click="submitForm">Thêm hoá đơn</button>
       </div>
     </form>
   </div>
@@ -92,14 +90,13 @@ export default {
       salespersonName: "",
       storeName: "",
       paymentMethod: "cash",
-      productExists: false,
-      notificationMessage: "",
+      messageFalseExists: false,
+      messageTrueExists: false,
+      notificationMessageFalse: "",
+      notificationMessageTrue: "",
     };
   },
   computed: {
-    availableProductsFiltered() {
-      return this.availableProducts.filter((product) => !product.select);
-    },
     totalAmount() {
       return this.selectedProducts.reduce(
         (total, product) => total + product.phonePrice,
@@ -111,37 +108,33 @@ export default {
     this.loadProducts();
   },
   methods: {
-    async saveData() {
-      // Chuẩn bị dữ liệu để gửi lên server
+    saveData() {
       const dataToSend = {
         customerName: this.customerName,
         salespersonName: this.salespersonName,
-        // ... thêm các trường dữ liệu khác tương ứng
         storeName: this.storeName,
         paymentMethod: this.paymentMethod,
         selectedPhones: this.selectedProducts,
       };
-      for (const product of this.selectedProducts) {
-        this.deletePhone(product._id);
-      }
-      // Gửi HTTP Request đến API của Spring Boot
-      await axios
+      this.deletePhoneHadBuy();
+      axios
         .post("http://localhost:8081/api/orders/save", dataToSend)
         .then((response) => {
           console.log("Dữ liệu đã được lưu thành công:", response.data);
-
-          // Xử lý sau khi lưu thành công nếu cần
+          this.showNotificationTrue("Lưu đơn hàng thành công");
         })
         .catch((error) => {
           console.error("Lỗi khi lưu dữ liệu:", error);
-          return;
-          // Xử lý lỗi nếu cần
         });
-
+    },
+    async deletePhoneHadBuy() {
+      for (const product of this.selectedProducts) {
+        await this.deletePhone(product._id);
+      }
       this.loadProducts();
     },
-    async loadProducts() {
-      await axios
+    loadProducts() {
+      axios
         .get("http://localhost:8081/api/v1/student/getAllPhone")
         .then((response) => {
           this.availableProducts = response.data;
@@ -152,7 +145,6 @@ export default {
     },
     addProduct() {
       if (this.selectedProducts.some((p) => p._id === this.selectedProduct)) {
-        // Nếu sản phẩm đã tồn tại trong danh sách, hiển thị thông báo và không thêm vào nữa
         this.showNotification("Sản phẩm đã được thêm");
         return;
       }
@@ -171,7 +163,6 @@ export default {
         await axios.delete(
           `http://localhost:8081/api/v1/student/delete/${phoneId}`
         );
-        this.getPhones();
       } catch (error) {
         console.error("Error deleting phone:", error);
       }
@@ -206,7 +197,6 @@ export default {
       this.paymentMethod = "cash";
       // Thêm các trường dữ liệu khác nếu cần
 
-      // Reset giá trị của selectedProduct để đảm bảo rằng select box trên form cũng được đặt về giá trị mặc định
       this.selectedProduct = null;
     },
     formatCurrency(amount) {
@@ -216,12 +206,21 @@ export default {
       }).format(amount);
     },
     showNotification(message) {
-      // Hiển thị thông báo
-      this.notificationMessage = message;
-      this.productExists = true;
+      this.notificationMessageFalse = message;
+      this.messageFalseExists = true;
+      this.messageTrueExists = false;
       // Ẩn thông báo sau 3 giây
       setTimeout(() => {
-        this.productExists = false;
+        this.messageFalseExists = false;
+      }, 3000);
+    },
+    showNotificationTrue(message) {
+      this.notificationMessageTrue = message;
+      this.messageTrueExists = true;
+      this.messageFalseExists = false;
+      // Ẩn thông báo sau 3 giây
+      setTimeout(() => {
+        this.messageTrueExists = false;
       }, 3000);
     },
   },
@@ -316,9 +315,20 @@ button:hover {
 }
 .notification {
   position: fixed;
+  display: block;
   top: 10px;
   right: 10px;
   background-color: #ff3333;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+.notificationTrue {
+  position: fixed;
+  display: block;
+  top: 10px;
+  right: 10px;
+  background-color: #22ee74;
   color: white;
   padding: 10px;
   border-radius: 5px;

@@ -1,107 +1,58 @@
 <template>
   <div>
-    <header v-if="!showLogin" class="app-header">
-      <h1>Nhân viên cửa hàng</h1>
-      <nav>
-        <ul>
-          <li
-            @click="
-              resetShow();
-              showSanPham = !showSanPham;
-            "
-          >
-            Quản lý sản phẩm
-          </li>
-          <li
-            @click="
-              resetShow();
-              showNCC = !showNCC;
-            "
-          >
-            Quản lý NCC
-          </li>
-          <li
-            @click="
-              resetShow();
-              showBoxAdd = !showBoxAdd;
-            "
-          >
-            Thêm hoá đơn
-          </li>
-          <li>Thống kê</li>
-        </ul>
-      </nav>
-    </header>
-    <div v-if="showNCC">
-      <nha-cung-cap-list />
-    </div>
-    <div v-if="showBoxAdd">
-      <BoxAdd />
-    </div>
     <div v-if="showLogin">
       <Login
-        @close="setLogin"
+        @SetQuanLy="setLoginQuanLy"
+        @SetNhanVien="setLoginNhanVien"
         @login-success="loginSuccess"
         @login-failure="loginFailure"
       >
-        <template v-slot:content>
-          <!-- Nội dung form đăng nhập -->
-        </template>
       </Login>
     </div>
-    <div v-if="showSanPham">
-      <SanPham />
+    <div v-if="showNhanVien" >
+      <NhanVien @logout="setLoginNhanVien"/>
+    </div>
+    <div v-if="showQuanLy">
+      <QuanLy @logout="setLoginQuanLy"/>
     </div>
   </div>
 </template>
 
 <script>
 import Login from "./components/Login.vue";
-import SanPham from "./components/SanPham.vue";
-import BoxAdd from "./components/ChucNang/BoxAdd.vue";
-import NhaCungCapList from "./components/NCC/NhaCungCapList.vue";
+import NhanVien from "./components/NV/NhanVien.vue";
+import QuanLy from "./components/QL/QuanLy.vue";
 
 export default {
-  components: { Login, SanPham, BoxAdd, NhaCungCapList },
+  components: { Login, NhanVien, QuanLy },
   data() {
     return {
       showLogin: true,
-      showBoxAdd: false,
-      showSanPham: false,
-      showNCC: false,
-      nhaCungCaps: [],
-      editedNhaCungCap: null,
+      showNhanVien: false,
+      showQuanLy: false,
     };
   },
-  computed: {
-    formTitle() {
-      return this.editedNhaCungCap ? "Sửa Nhà Cung Cấp" : "Thêm Nhà Cung Cấp";
-    },
-    submitButtonText() {
-      return this.editedNhaCungCap ? "Cập nhật" : "Thêm mới";
-    },
-  },
   methods: {
-    setLogin() {
+    setLoginQuanLy() {
       this.showLogin = !this.showLogin;
+      this.showQuanLy = !this.showQuanLy;
     },
-    loginSuccess() {
-      this.showModal = false;
+    setLoginNhanVien() {
+      this.showLogin = !this.showLogin;
+      this.showNhanVien = !this.showNhanVien;
     },
+    loginSuccess() {},
     loginFailure(error) {
-      alert(error);
+
     },
     resetShow() {
-      this.showBoxAdd = false;
-      this.showSanPham = false;
-      this.showNCC = false;
+
     },
   },
 };
 </script>
 
 <style scoped>
-/* CSS cho giao diện header */
 .app-header {
   background-color: #26899c;
   color: #ffffff;
