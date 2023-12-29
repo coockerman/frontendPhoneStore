@@ -36,7 +36,14 @@
             >
               Quản lý User
             </li>
-            <li>Thống kê</li>
+            <li
+              @click="
+                resetShow();
+                showHienThiBieuDo = !showHienThiBieuDo;
+              "
+            >
+              Thống kê
+            </li>
             <li @click="logout">Đăng xuất</li>
           </ul>
         </nav>
@@ -56,6 +63,9 @@
       <div v-if="showHienThiHoaDon">
         <HienThiHoaDon />
       </div>
+      <div v-if="showHienThiBieuDo">
+        <BieuDo />
+      </div>
     </div>
   </template>
   
@@ -64,14 +74,16 @@
   import QuanLyNCC from "@/components/NCC/QuanLyNCC.vue";
   import QuanLyTTNV from "@/components/NV/QLTTNhanVien.vue";
   import HienThiHoaDon from "@/components/HoaDon/HienThiHoaDon.vue";
+  import BieuDo from "@/components/BieuDo/ChartComponent.vue";
   export default {
-    components: { SanPham, QuanLyNCC, QuanLyTTNV, HienThiHoaDon },
+    components: { SanPham, QuanLyNCC, QuanLyTTNV, HienThiHoaDon, BieuDo },
     data() {
       return {
         showSanPham: true,
         showNCC: false,
         showQLTTNhanVien: false,
         showHienThiHoaDon: false,
+        showHienThiBieuDo: false,
         nhaCungCaps: [],
         editedNhaCungCap: null,
       };
@@ -93,6 +105,7 @@
         this.showNCC = false;
         this.showQLTTNhanVien = false;
         this.showHienThiHoaDon = false;
+        this.showHienThiBieuDo = false;
       },
     },
   };

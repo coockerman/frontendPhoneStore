@@ -2,7 +2,9 @@
   <div>
     <div class="phone-manager">
       <div class="phone-form">
-        <h2>{{ editingPhoneId != null ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}}</h2>
+        <h2>
+          {{ editingPhoneId != null ? "Cập nhật sản phẩm" : "Thêm sản phẩm" }}
+        </h2>
         <div class="input-container">
           <label for="phoneName">Tên:</label>
           <input
@@ -49,7 +51,9 @@
             @input="limitNumberLength"
           />
         </div>
-        <button @click="savePhone">{{ editingPhoneId != null ? "Cập nhật" : "Thêm mới"}}</button>
+        <button @click="savePhone">
+          {{ editingPhoneId != null ? "Cập nhật" : "Thêm mới" }}
+        </button>
 
         <!-- Hiển thị thông báo lỗi -->
         <div v-if="error" class="error-message">
@@ -63,7 +67,7 @@
       </div>
 
       <div class="phone-list">
-        <h2>Danh sách sản phẩm</h2>
+        <h2>Kho sản phẩm</h2>
         <!-- sort -->
         <div class="sort-options">
           <label for="sortBy"></label>
@@ -88,6 +92,8 @@
               <th>Màu sắc</th>
               <th>NCC</th>
               <th>Giá</th>
+              <th>Thời gian nhập</th>
+              <!-- Thêm cột thời gian -->
               <th>Thao tác</th>
             </tr>
           </thead>
@@ -99,6 +105,8 @@
               <td>{{ phone.phoneColor }}</td>
               <td>{{ phone.ncc.ten }}</td>
               <td>{{ formatCurrency(phone.phonePrice) }}</td>
+              <td>{{ formatDateTime(phone.purchaseTime) }}</td>
+              <!-- Hiển thị thời gian -->
               <td>
                 <button class="btnEdit" @click="editPhone(phone)">Edit</button>
                 <button class="btnDelete" @click="deletePhone(phone._id)">
@@ -348,7 +356,12 @@ export default {
       this.editingPhoneId = null;
       this.error = "";
       this.idNCC = 0;
-
+    },
+    formatDateTime(dateTime) {
+      if(dateTime==null) return null
+      // Hàm định dạng thời gian
+      const options = { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
+      return new Intl.DateTimeFormat("vi-VN", options).format(new Date(dateTime));
     },
   },
 };

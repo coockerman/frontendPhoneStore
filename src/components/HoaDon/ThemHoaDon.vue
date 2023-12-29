@@ -1,79 +1,93 @@
 <template>
-  <div class="form-container">
-    <div v-if="messageFalseExists" class="notification">
-      {{ notificationMessageFalse }}
-    </div>
-    <div v-if="messageTrueExists" class="notificationTrue">
-      {{ notificationMessageTrue }}
-    </div>
-    <form @submit.prevent="submitForm" class="my-form">
-      <div class="form-group">
-        <label for="customerName">Tên khách hàng:</label>
-        <input v-model="customerName" type="text" id="customerName" required />
+  <div class="form-parent">
+    <div class="form-container">
+      <div v-if="messageFalseExists" class="notification">
+        {{ notificationMessageFalse }}
       </div>
-
-      <div class="form-group">
-        <label for="salespersonName">Tên người bán:</label>
-        <input
-          v-model="salespersonName"
-          type="text"
-          id="salespersonName"
-          required
-        />
+      <div v-if="messageTrueExists" class="notificationTrue">
+        {{ notificationMessageTrue }}
       </div>
-
-      <div class="form-group">
-        <label for="product">Chọn sản phẩm:</label>
-        <div class="product-selection">
-          <select v-model="selectedProduct" id="product">
+      <form @submit.prevent="submitForm" class="my-form">
+        <div class="form-group">
+          <label for="customer">Chọn khách hàng:</label>
+          <select
+            v-model="selectedCustomer"
+            @change="updateCustomerName"
+            id="customer"
+          >
             <option
-              v-for="product in availableProducts"
-              :key="product._id"
-              :value="product._id"
+              v-for="customer in customers"
+              :key="customer.id"
+              :value="customer.id"
             >
-              {{ product.phoneName }}
+              {{ customer.ten }} - {{ customer.sdt }}
             </option>
           </select>
-          <button type="button" @click="addProduct">Thêm sản phẩm</button>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label>Danh sách sản phẩm:</label>
-        <ul v-if="selectedProducts.length > 0" class="product-list">
-          <li v-for="(product, index) in selectedProducts" :key="index">
-            {{ product.phoneName }} - {{ formatCurrency(product.phonePrice) }}
-            <button type="button" @click="removeProduct(index)">Xóa</button>
-          </li>
-        </ul>
-        <p v-else class="no-products">Không có sản phẩm.</p>
-      </div>
+        <div class="form-group">
+          <label for="salespersonName">Tên người bán:</label>
+          <input
+            v-model="salespersonName"
+            type="text"
+            id="salespersonName"
+            required
+          />
+        </div>
 
-      <div class="form-group">
-        <label for="storeName">Cơ sở:</label>
-        <input v-model="storeName" type="text" id="storeName" required />
-      </div>
+        <div class="form-group">
+          <label for="product">Chọn sản phẩm:</label>
+          <div class="product-selection">
+            <select v-model="selectedProduct" id="product">
+              <option
+                v-for="product in availableProducts"
+                :key="product._id"
+                :value="product._id"
+              >
+                {{ product.phoneName }}
+              </option>
+            </select>
+            <button type="button" @click="addProduct">Thêm sản phẩm</button>
+          </div>
+        </div>
 
-      <div class="form-group">
-        <label for="paymentMethod">Hình thức thanh toán:</label>
-        <select v-model="paymentMethod" id="paymentMethod">
-          <option value="cash">Tiền mặt</option>
-          <option value="creditCard">Thẻ tín dụng</option>
-          <!-- Thêm các tùy chọn thanh toán khác nếu cần -->
-        </select>
-      </div>
+        <div class="form-group">
+          <label>Danh sách sản phẩm:</label>
+          <ul v-if="selectedProducts.length > 0" class="product-list">
+            <li v-for="(product, index) in selectedProducts" :key="index">
+              {{ product.phoneName }} - {{ formatCurrency(product.phonePrice) }}
+              <button type="button" @click="removeProduct(index)">Xóa</button>
+            </li>
+          </ul>
+          <p v-else class="no-products">Không có sản phẩm.</p>
+        </div>
 
-      <div class="form-group">
-        <label for="totalAmount">Tổng tiền:</label>
-        <span class="total-amount-value">{{
-          formatCurrency(totalAmount)
-        }}</span>
-      </div>
+        <div class="form-group">
+          <label for="storeName">Cơ sở:</label>
+          <input v-model="storeName" type="text" id="storeName" required />
+        </div>
 
-      <div class="form-group">
-        <button type="submit" @click="submitForm">Thêm hoá đơn</button>
-      </div>
-    </form>
+        <div class="form-group">
+          <label for="paymentMethod">Hình thức thanh toán:</label>
+          <select v-model="paymentMethod" id="paymentMethod">
+            <option value="cash">Tiền mặt</option>
+            <option value="creditCard">Thẻ tín dụng</option>
+            <!-- Thêm các tùy chọn thanh toán khác nếu cần -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="totalAmount">Tổng tiền:</label>
+          <span class="total-amount-value">{{
+            formatCurrency(totalAmount)
+          }}</span>
+        </div>
+
+        <div class="form-group">
+          <button type="submit" @click="submitForm">Thêm hoá đơn</button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
   
@@ -94,6 +108,9 @@ export default {
       messageTrueExists: false,
       notificationMessageFalse: "",
       notificationMessageTrue: "",
+      customers: [], // Thêm danh sách khách hàng
+      selectedCustomer: null,
+      selectedCustomerName: "",
     };
   },
   computed: {
@@ -105,12 +122,23 @@ export default {
     },
   },
   mounted() {
+    this.loadCustomers();
     this.loadProducts();
   },
   methods: {
+    loadCustomers() {
+      axios
+        .get("http://localhost:8081/api/v1/KH/getAll")
+        .then((response) => {
+          this.customers = response.data;
+        })
+        .catch((error) => {
+          console.error("Error fetching customers: ", error);
+        });
+    },
     saveData() {
       const dataToSend = {
-        customerName: this.customerName,
+        customerName: this.selectedCustomerName,
         salespersonName: this.salespersonName,
         storeName: this.storeName,
         paymentMethod: this.paymentMethod,
@@ -132,6 +160,16 @@ export default {
         await this.deletePhone(product._id);
       }
       this.loadProducts();
+    },
+    updateCustomerName() {
+      const selectedCustomer = this.customers.find(
+        (customer) => customer.id === this.selectedCustomer
+      );
+      if (selectedCustomer) {
+        this.selectedCustomerName = selectedCustomer.ten;
+      } else {
+        this.selectedCustomerName = "";
+      }
     },
     loadProducts() {
       axios
@@ -175,7 +213,7 @@ export default {
     },
     submitForm() {
       if (
-        !this.customerName ||
+        !this.selectedCustomer ||
         !this.salespersonName ||
         this.selectedProducts.length === 0 ||
         !this.storeName ||
@@ -190,7 +228,7 @@ export default {
     },
     clearForm() {
       // Xóa dữ liệu trong state
-      this.customerName = "";
+      this.selectedCustomer = null;
       this.salespersonName = "";
       this.selectedProducts = [];
       this.storeName = "";
@@ -229,11 +267,15 @@ export default {
   
   <style scoped>
 /* CSS cho biểu mẫu */
+.form-parent {
+  margin-top: 20px;
+  width: 100%;
+}
 .form-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  /* height: 100vh; */
 }
 
 .my-form {

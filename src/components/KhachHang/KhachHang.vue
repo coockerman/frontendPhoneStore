@@ -9,6 +9,33 @@
         Tất cả khách hàng
       </button>
     </div>
+   
+    <div>
+      <h3>{{ editing ? "Sửa Khách Hàng" : "Thêm Khách Hàng" }}</h3>
+      <form @submit.prevent="saveKhachHang" class="form-container">
+        <div class="form-group">
+          <label for="ten">Tên:</label>
+          <input v-model="formData.ten" id="ten" required />
+        </div>
+        <div class="form-group">
+          <label for="sdt">SĐT:</label>
+          <input v-model="formData.sdt" id="sdt" required />
+        </div>
+        <div class="form-group">
+          <label for="gioitinh">Giới Tính:</label>
+          <select v-model="formData.gioitinh" id="gioitinh">
+            <option value="">                </option>
+            <option value="Nam">Nam</option>
+            <option value="Nữ">Nữ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="diachi">Địa Chỉ:</label>
+          <input v-model="formData.diachi" id="diachi" />
+        </div>
+        <button type="submit">{{ editing ? "Cập nhật" : "Thêm mới" }}</button>
+      </form>
+    </div>
     <table>
       <thead>
         <tr>
@@ -38,28 +65,6 @@
         </tr>
       </tbody>
     </table>
-    <div>
-    <h3>{{ editing ? "Sửa Khách Hàng" : "Thêm Khách Hàng" }}</h3>
-    <form @submit.prevent="saveKhachHang" class="form-container">
-      <div class="form-group">
-        <label for="ten">Tên:</label>
-        <input v-model="formData.ten" id="ten" required />
-      </div>
-      <div class="form-group">
-        <label for="sdt">SĐT:</label>
-        <input v-model="formData.sdt" id="sdt" required />
-      </div>
-      <div class="form-group">
-        <label for="gioitinh">Giới Tính:</label>
-        <input v-model="formData.gioitinh" id="gioitinh" />
-      </div>
-      <div class="form-group">
-        <label for="diachi">Địa Chỉ:</label>
-        <input v-model="formData.diachi" id="diachi" />
-      </div>
-      <button type="submit">{{ editing ? "Cập nhật" : "Thêm mới" }}</button>
-    </form>
-  </div>
   </div>
 </template>
   
@@ -220,7 +225,7 @@ input {
 }
 
 button {
-  background-color: #008CBA;
+  background-color: #008cba;
   color: white;
   border: none;
   padding: 10px 15px;
