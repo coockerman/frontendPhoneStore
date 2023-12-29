@@ -28,6 +28,14 @@
           >
             Thêm hoá đơn
           </li>
+          <li
+            @click="
+              resetShow();
+              showKhachHang = !showKhachHang;
+            "
+          >
+            Quản lý khách hàng
+          </li>
           <li @click="logout">Đăng xuất</li>
         </ul>
       </nav>
@@ -41,6 +49,9 @@
     <div v-if="showSanPham">
       <SanPham />
     </div>
+    <div v-if="showKhachHang">
+      <KhachHang />
+    </div>
   </div>
 </template>
 
@@ -48,14 +59,15 @@
 import SanPham from "@/components/NV/SanPham.vue";
 import ThemHoaDon from "@/components/HoaDon/ThemHoaDon.vue";
 import QuanLyNCC from "@/components/NCC/QuanLyNCC.vue";
-
+import KhachHang from "@/components/KhachHang/KhachHang.vue";
 export default {
-  components: { SanPham, ThemHoaDon, QuanLyNCC },
+  components: { SanPham, ThemHoaDon, QuanLyNCC, KhachHang },
   data() {
     return {
       ShowThemHoaDon: false,
       showSanPham: true,
       showNCC: false,
+      showKhachHang: false,
       nhaCungCaps: [],
       editedNhaCungCap: null,
     };
@@ -82,6 +94,7 @@ export default {
       this.ShowThemHoaDon = false;
       this.showSanPham = false;
       this.showNCC = false;
+      this.showKhachHang = false;
     },
   },
 };

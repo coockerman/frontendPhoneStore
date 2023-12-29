@@ -2,7 +2,7 @@
   <div>
     <div class="phone-manager">
       <div class="phone-form">
-        <h2>Thêm/sửa sản phẩm</h2>
+        <h2>{{ editingPhoneId != null ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}}</h2>
         <div class="input-container">
           <label for="phoneName">Tên:</label>
           <input
@@ -49,7 +49,7 @@
             @input="limitNumberLength"
           />
         </div>
-        <button @click="savePhone">Lưu</button>
+        <button @click="savePhone">{{ editingPhoneId != null ? "Cập nhật" : "Thêm mới"}}</button>
 
         <!-- Hiển thị thông báo lỗi -->
         <div v-if="error" class="error-message">
