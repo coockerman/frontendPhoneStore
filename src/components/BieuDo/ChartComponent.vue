@@ -1,13 +1,14 @@
 <template>
     <h1>Thống kê doanh thu</h1>
-  <div class="chart-container">
-    <div class="chart">
+  <!-- <div class="chart-container">
+    
+  </div> -->
+  <div class="chart">
       <Bar id="my-chart-id" :options="chartOptions" :data="chartData7day" />
     </div>
     <div class="chart">
       <Bar id="my-chart-id" :options="chartOptions" :data="chartData30day" />
     </div>
-  </div>
   <div>
     <Bar id="my-chart-id" :options="chartOptions" :data="chartData12month" />
   </div>
@@ -226,7 +227,7 @@ body {
 
 .chart {
   flex: 1; /* Phần tử sẽ mở rộng để lấp đầy không gian */
-  margin: 0 10px; /* Khoảng cách giữa các biểu đồ */
+  margin: 0 5px; /* Khoảng cách giữa các biểu đồ */
 }
 /* Định dạng phần tử trong component */
 #my-chart-id {

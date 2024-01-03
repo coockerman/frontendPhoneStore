@@ -7,22 +7,6 @@
             <li
               @click="
                 resetShow();
-                showSanPham = !showSanPham;
-              "
-            >
-              Quản lý sản phẩm
-            </li>
-            <li
-              @click="
-                resetShow();
-                showNCC = !showNCC;
-              "
-            >
-              Quản lý NCC
-            </li>
-            <li
-              @click="
-                resetShow();
                 showHienThiHoaDon = !showHienThiHoaDon;
               "
             >
@@ -44,19 +28,16 @@
             >
               Thống kê
             </li>
-            <li @click="logout">Đăng xuất</li>
+            
           </ul>
+          <div @click="logout" class="logout-button">Đăng xuất</div>
         </nav>
       </header>
-      <div v-if="showNCC">
-        <QuanLyNCC />
-      </div>
+      
       <div v-if="ShowThemHoaDon">
         <ThemHoaDon />
       </div>
-      <div v-if="showSanPham">
-        <SanPham />
-      </div>
+      
       <div v-if="showQLTTNhanVien">
         <QuanLyTTNV />
       </div>
@@ -70,17 +51,13 @@
   </template>
   
   <script>
-  import SanPham from "@/components/NV/SanPham.vue";
-  import QuanLyNCC from "@/components/NCC/QuanLyNCC.vue";
   import QuanLyTTNV from "@/components/NV/QLTTNhanVien.vue";
   import HienThiHoaDon from "@/components/HoaDon/HienThiHoaDon.vue";
   import BieuDo from "@/components/BieuDo/ChartComponent.vue";
   export default {
-    components: { SanPham, QuanLyNCC, QuanLyTTNV, HienThiHoaDon, BieuDo },
+    components: { QuanLyTTNV, HienThiHoaDon, BieuDo },
     data() {
       return {
-        showSanPham: true,
-        showNCC: false,
         showQLTTNhanVien: false,
         showHienThiHoaDon: false,
         showHienThiBieuDo: false,
@@ -101,8 +78,6 @@
         this.$emit("logout");
       },
       resetShow() {
-        this.showSanPham = false;
-        this.showNCC = false;
         this.showQLTTNhanVien = false;
         this.showHienThiHoaDon = false;
         this.showHienThiBieuDo = false;
@@ -147,5 +122,21 @@
     color: #e74c3c;
     text-decoration: underline;
   }
+  .logout-button {
+  background-color: #e74c3c;
+  color: #fff;
+  padding: 10px 15px;
+  max-width: 100px;
+  margin-left: auto;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #c0392b;
+  text-decoration: underline;
+}
   </style>
   

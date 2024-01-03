@@ -3,42 +3,15 @@
     <header class="app-header">
       <h1>Nhân viên cửa hàng</h1>
       <nav>
-        <ul>
-          <li
-            @click="
-              resetShow();
-              showSanPham = !showSanPham;
-            "
-          >
-            Quản lý sản phẩm
-          </li>
-          <li
-            @click="
-              resetShow();
-              showNCC = !showNCC;
-            "
-          >
-            Quản lý NCC
-          </li>
-          <li
-            @click="
-              resetShow();
-              ShowThemHoaDon = !ShowThemHoaDon;
-            "
-          >
-            Thêm hoá đơn
-          </li>
-          <li
-            @click="
-              resetShow();
-              showKhachHang = !showKhachHang;
-            "
-          >
-            Quản lý khách hàng
-          </li>
-          <li @click="logout">Đăng xuất</li>
+        <ul class="menu-list">
+          <li @click="resetShow(); showSanPham = !showSanPham;">Quản lý sản phẩm</li>
+          <li @click="resetShow(); showNCC = !showNCC;">Quản lý NCC</li>
+          <li @click="resetShow(); showKhachHang = !showKhachHang;">Quản lý khách hàng</li>
+          <li @click="resetShow(); ShowThemHoaDon = !ShowThemHoaDon;">Thêm hoá đơn</li>
+          
         </ul>
       </nav>
+      <div @click="logout" class="logout-button">Đăng xuất</div>
     </header>
     <div v-if="showNCC">
       <QuanLyNCC />
@@ -134,6 +107,22 @@ li {
 
 li:hover {
   color: #e74c3c;
+  text-decoration: underline;
+}
+.logout-button {
+  background-color: #e74c3c;
+  color: #fff;
+  padding: 10px 15px;
+  max-width: 100px;
+  margin-left: auto;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #c0392b;
   text-decoration: underline;
 }
 </style>

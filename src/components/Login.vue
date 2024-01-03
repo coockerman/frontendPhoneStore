@@ -1,8 +1,6 @@
 <template>
   <div class="modal-container" v-show="isOpen">
     <div class="modal-content" @click.stop>
-      <li>nhanvien:123abc</li>
-      <li>quanly:123abc</li>
       <slot name="content">
         <h2>Đăng nhập</h2>
         <form @submit.prevent="login">
